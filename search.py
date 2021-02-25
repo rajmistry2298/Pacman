@@ -85,9 +85,41 @@ def depthFirstSearch(problem):
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+    
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    #First Initialize Open and Closed List.
+    #For DFS Open will be Stack and Closed is set. Closed List is for Explored/Visited Nodes
+    openList = util.Stack()
+    closedList = set()
+    
+    #Get Start Node Position and Insert First Source node in OpenList
+    startNodeState = problem.getStartState()
+    
+    #Make Tuple of State of Node and Directions/actions List to reach there from Start Node
+    startNode = (startNodeState, [])
+    openList.push(startNode)
+    
+    #Now Until Open List is Not Empty Check For every Node by taking it from Stack(OpenList) whether
+    # it is Goal State or Not and if its Goal state than return the Directions/Actions List, otherwise
+    # check if that node is not already in Visited/Closed List and if not than add to closed list and add 
+    # that node's all Successors to OpenList with their Direction/Aactions List.
+    while not openList.isEmpty():
+        leftmostNode = openList.pop()
+        if problem.isGoalState(leftmostNode[0]):
+            #print("Goal State Reached !!! ")
+            #print("Actions : ")
+            #print(currentNode[1])
+            return leftmostNode[1]
+        
+        if leftmostNode[0] not in closedList:
+            closedList.add(leftmostNode[0])
+            for successor in problem.getSuccessors(leftmostNode[0]):
+                childNodeState = successor[0]
+                childNodeActions = leftmostNode[1] + [successor[1]]
+                childNode = (childNodeState, childNodeActions)
+                openList.push(childNode)
+    return None
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
