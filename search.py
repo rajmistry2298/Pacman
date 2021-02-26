@@ -207,8 +207,43 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    "*** YOUR CODE HERE *** queue.update(next_node, total_cost + heuristic(successor[0], problem))"
+    #First Initialize Open and Closed List.
+    #For A* Open will be PriorityQueue which will take Nodes from Queue based on their Total Cost 
+    # which is g(n)[calculated in UCS] plus heuristic cost rather than FIFO like normal Queue and 
+    # Closed is set. Closed List is for Explored/Visited Nodes
+    openList = util.PriorityQueue()
+    closedList = set()
+    
+    #Get Start Node Position and Insert First Source node in OpenList
+    startNodeState = problem.getStartState()
+    
+    #Make Tuple of State of Node and Directions/actions List to reach there from Start Node and 
+    # 2nd value as its Priority Cost
+    startNode = ((startNodeState, []), 0)
+    openList.update(startNode, 0)
+    
+    #Now Until Open List is Not Empty Check For every Node by taking it from Priority Queue(OpenList) [Based on Cost] 
+    # whether it is Goal State or Not and if its Goal state than return the Directions/Actions List, otherwise
+    # check if that node is not already in Visited/Closed List and if not than add to closed list and add 
+    # that node's all Successors to OpenList with their Direction/Aactions List and TotalCost.
+    while not openList.isEmpty():
+        leftmostNode = openList.pop()
+        if problem.isGoalState(leftmostNode[0][0]):
+            #print("Goal State Reached !!! ")
+            #print("Actions : ")
+            #print(currentNode[1])
+            return leftmostNode[0][1]
+        
+        if leftmostNode[0][0] not in closedList:
+            closedList.add(leftmostNode[0][0])
+            for successor in problem.getSuccessors(leftmostNode[0][0]):
+                childNodeState = successor[0]
+                childNodeActions = leftmostNode[0][1] + [successor[1]]
+                childNodeCost = leftmostNode[1] + successor[2]
+                childNode = ((childNodeState, childNodeActions), childNodeCost)
+                openList.update(childNode, childNodeCost + heuristic(successor[0], problem))
+    return None
 
 
 # Abbreviations
