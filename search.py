@@ -207,7 +207,7 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE *** queue.update(next_node, total_cost + heuristic(successor[0], problem))"
+    "*** YOUR CODE HERE ***"
     #First Initialize Open and Closed List.
     #For A* Open will be PriorityQueue which will take Nodes from Queue based on their Total Cost 
     # which is g(n)[calculated in UCS] plus heuristic cost rather than FIFO like normal Queue and 

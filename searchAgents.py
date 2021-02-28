@@ -381,18 +381,6 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    """
-    # Heuristic: the distance between the Pacman and the unvisited farthest corner
-    dis_list = [] # the list to store all the unvisited distance between pacman and the corner
-    for corner in state[1]:
-        if corner != None:
-            distance = util.manhattanDistance(state[0], corner)
-            dis_list.append(distance)
-
-    if len(dis_list) > 0:
-        return max(dis_list)
-    return 0 # Default to trivial solution
-"""
     #Heuristic Used: The largest Distance between the Pacman and corner
     maxHeuristicDistance = 0
     states = list(state[1])
@@ -496,9 +484,29 @@ def foodHeuristic(state, problem):
     Subsequent calls to this heuristic can access
     problem.heuristicInfo['wallCount']
     """
-    position, foodGrid = state
+    position, foodGrid = state 
+    #print(position)
+    #position are as (column,row) tuple
+    #print(foodGrid)
+    #print(foodGrid.asList()) #Gives List of Coordinates where the food is present
     "*** YOUR CODE HERE ***"
-    return 0
+    heuristicValue = 0
+    foodDistances = []
+    
+    if len(foodGrid.asList()) == 0:
+        return heuristicValue
+    
+    for i in range(foodGrid.width):#row/width
+        for j in range(foodGrid.height):#column/height
+            if foodGrid[i][j]:
+                distance = mazeDistance((i, j), position,problem.startingGameState)
+                foodDistances.append(distance)
+    
+    foodDistances = sorted(foodDistances, reverse = True)
+    heuristicValue = foodDistances[0]
+
+    return heuristicValue
+    
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -527,9 +535,24 @@ class ClosestDotSearchAgent(SearchAgent):
         food = gameState.getFood()
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
+        #print(gameState)
+        #print(startPosition)
+        #print(food)
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        closestDotDistance = 100000000
+        closestDotCoordinates = []
+        for i in range(food.width):
+            for j in range(food.height):
+                if food[i][j]:
+                    currentDistance = mazeDistance((i, j), startPosition, gameState)
+                    if currentDistance < closestDotDistance:
+                        closestDotCoordinates.clear()
+                        closestDotDistance = currentDistance
+                        closestDotCoordinates = [i, j]
+        
+        
+        return search.bfs(PositionSearchProblem(gameState, start=startPosition, goal=tuple(closestDotCoordinates), warn=False, visualize=False))
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -565,6 +588,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
+        #return self.food[x][y]
         util.raiseNotDefined()
 
 def mazeDistance(point1, point2, gameState):
